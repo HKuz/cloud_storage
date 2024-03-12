@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - version-14
+      - fix_ci_tests  # TODO: remove when done testing
   pull_request:
 
 concurrency:

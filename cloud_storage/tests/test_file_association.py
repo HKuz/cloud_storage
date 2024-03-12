@@ -1,10 +1,9 @@
 from io import BytesIO
 from pathlib import Path
 
-import pytest
-from moto import mock_s3
-
 import frappe
+import pytest
+from moto import mock_aws
 
 
 @pytest.fixture
@@ -17,7 +16,7 @@ def get_cloud_storage_client_fixture():
 	return frappe.call("cloud_storage.cloud_storage.overrides.file.get_cloud_storage_client")
 
 
-@mock_s3
+@mock_aws
 def test_config(get_cloud_storage_client_fixture):
 	c = get_cloud_storage_client_fixture
 	assert c.bucket == "test_bucket"
@@ -47,7 +46,7 @@ def create_upload_file(file_path, **kwargs):
 	return frappe.call("frappe.handler.upload_file")
 
 
-@mock_s3
+@mock_aws
 def test_upload_file(example_file_record_0):
 	file = create_upload_file(example_file_record_0)
 	assert frappe.db.exists("File", file.name)
@@ -71,7 +70,7 @@ def test_upload_file(example_file_record_0):
 	assert file.file_association[1].link_name == "Cloud Storage"
 
 
-# @mock_s3
+# @mock_aws
 # def test_upload_file_with_association(example_file_record_0):
 # 	file = create_upload_file(example_file_record_0)
 # 	second_association = create_upload_file(example_file_record_0, doctype='Module Def', docname="Cloud Storage")
